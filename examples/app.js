@@ -15,7 +15,13 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <Demo />
+        <Demo elementHeight={50}>
+          <div>21312</div>
+          <div>21312</div>
+          <div>21312</div>
+          <div>21312</div>
+          <div>21312</div>
+        </Demo>
       </div>
     );
   }
