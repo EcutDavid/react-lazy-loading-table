@@ -21,6 +21,7 @@ export default class LazyLoadingTable extends Component {
       itemInViewCount: 0,
       headItemInViewIndex: Number.MAX_VALUE
     }
+    this.lockEventHanlder = false
   }
 
 
@@ -37,6 +38,14 @@ export default class LazyLoadingTable extends Component {
   }
 
   onWindowPositionChange() {
+    // Restrict the frequency of props changes
+    if (!this.lockEventHanlder) {
+      this.lockEventHanlder = true
+      setTimeout(() => {
+        this.lockEventHanlder = false
+      }, 100)
+    } else return
+
     const { elementHeight } = this.props,
       containerOffset = this.refs.container.offsetTop,
       windowScrollTop = getWindowScrollTop(),
