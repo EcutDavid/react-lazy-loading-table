@@ -19,7 +19,7 @@ export default class LazyLoadingTable extends Component {
     this.onWindowPositionChange = this.onWindowPositionChange.bind(this)
     this.state = {
       itemInViewCount: 0,
-      headItemInViewIndex: Number.MAX_VALUE
+      headItemIndex: Number.MAX_VALUE
     }
     this.lockEventHanlder = false
   }
@@ -52,22 +52,22 @@ export default class LazyLoadingTable extends Component {
       windowHeight = getWindowHeight(),
       elementCount = this.props.children.length,
       containerTailOffset = containerOffset + elementCount * elementHeight,
-      tableOutOfView = windowScrollTop + windowHeight < containerOffset ||
-        containerTailOffset < windowScrollTop
+      tableOutOfView = (windowScrollTop + windowHeight < containerOffset)
+        || (containerTailOffset < windowScrollTop)
 
-    let headItemInViewIndex = Number.MAX_VALUE
+    let headItemIndex = Number.MAX_VALUE
     let itemInViewCount = 0
     if (!tableOutOfView) {
       let containerInViewHeight = 0
 
       //haven't fully scroll to container's top
       if (windowScrollTop <= containerOffset) {
-        headItemInViewIndex = 0
+        headItemIndex = 0
         containerInViewHeight = windowHeight -
           (containerOffset - windowScrollTop)
       } else {
         const passedDistance = windowScrollTop - containerOffset
-        headItemInViewIndex = Math.floor(passedDistance / elementHeight)
+        headItemIndex = Math.floor(passedDistance / elementHeight)
         const onlyContainerInView =
           windowScrollTop + windowHeight < containerTailOffset
         containerInViewHeight = onlyContainerInView ?
@@ -75,7 +75,7 @@ export default class LazyLoadingTable extends Component {
       }
       itemInViewCount = Math.ceil(containerInViewHeight / elementHeight)
     }
-    this.setState({ headItemInViewIndex, itemInViewCount })
+    this.setState({ headItemIndex, itemInViewCount })
   }
 
   render() {
@@ -85,7 +85,7 @@ export default class LazyLoadingTable extends Component {
       injectedPropName
     } = this.props
 
-    const { itemInViewCount, headItemInViewIndex: index } = this.state
+    const { itemInViewCount, headItemIndex: index } = this.state
 
     const childrenWithProps = Children.map(children,
      (child, i) => cloneElement(child, {
