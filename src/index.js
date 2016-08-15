@@ -37,14 +37,18 @@ export default class LazyLoadingTable extends Component {
     )
   }
 
-  onWindowPositionChange() {
-    // Restrict the frequency of props changes
+  // Restrict the frequency of props changes
+  checkIsEventInLocking() {
     if (!this.lockEventHanlder) {
       this.lockEventHanlder = true
       setTimeout(() => {
         this.lockEventHanlder = false
       }, 100)
-    } else return
+    } else return true
+  }
+
+  onWindowPositionChange() {
+    if (this.checkIsEventInLocking()) return
 
     const { elementHeight } = this.props,
       containerOffset = this.refs.container.offsetTop,
@@ -55,8 +59,12 @@ export default class LazyLoadingTable extends Component {
       tableOutOfView = (windowScrollTop + windowHeight < containerOffset)
         || (containerTailOffset < windowScrollTop)
 
+    // The first item which currently user is viewing
     let headItemIndex = Number.MAX_VALUE
+
+    // Indicates the number of items users is viewing
     let itemInViewCount = 0
+
     if (!tableOutOfView) {
       let containerInViewHeight = 0
 
@@ -73,6 +81,7 @@ export default class LazyLoadingTable extends Component {
         containerInViewHeight = onlyContainerInView ?
           windowHeight : containerTailOffset - windowScrollTop
       }
+
       itemInViewCount = Math.ceil(containerInViewHeight / elementHeight)
     }
     this.setState({ headItemIndex, itemInViewCount })
